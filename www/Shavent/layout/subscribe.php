@@ -12,8 +12,18 @@
 				</nav>
 			</header>
 		</div>	
+            <form method="post" action="../Script/add_new_user.php">
                 <div class="body_subscribe">
-    
+                    <fieldset class='subscription_form' >
+                        <legend>Merci d'entrer vue informations</legend>
+                        <label for="nom_utilisateur" >Nom d'utilisateur</label>
+                        <input type="text" name='nom_utilisateur' id="nom_utilisateur" autofocus required/><br/>
+                        <label for="password">Mot de passe</label>
+                        <input type="text" name='password' id="password" required/><br/>
+                        <label for="mail">Adresse mail</label>
+                        <input type="text" name='mail' id="mail" required/><br/>
+                    </fieldset>
+                   <input type="submit" value="Envoyer"></code>
                     <?php
                     /*
                     try{
@@ -35,9 +45,12 @@
                     $response->closeCursor();
                     
                     */ 
+
+                    
                     ?>
+                    
 
                 </div>
-            
+            </form>
 	</body>
 </html>
