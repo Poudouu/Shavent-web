@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
+    
+    
+    
     <link rel="shortcut icon" href="assets/ico/favicon.png">
 
     <title>Shavent</title>
@@ -23,18 +27,26 @@
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
       <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
     <![endif]-->
+    <script>
+        function generateMainView(param){
+            var div = document.createElement("div");
+            switch (param){
+                case 1:
+                div.innerHTML= "<form method='post' action='Scripts/addEvent.php'>"+"<fieldset class='subscription_form' >"+ "<legend>Veuillez rentrer les informations de l'évènement</legend>"+"<label for='event_name' style='margin:10px'>Nom de l'évènement</label>"+"<input type='text' name='event_name' id='event_name' autofocus required/><br/>"+"<label for='date' style='margin:10px'>Mot de passe</label>"+"<input type='date' name='date' id='date' required/><br/>"+"<label for='duration' style='margin:10px'>Durée de l'évènement (min)</label>"+"<input type='text' name='duration' id='duration' required/><br/>"+"<label for='event_location' style='margin:10px'>Lieu de l'évènement</label>"+"<input type='text' name='event_location' id='event_location' required/><br/>"+"</fieldset>"+"<input type='submit' value='Envoyer' style='margin:10px'></code>"+"</form>";
+                case 2:
+                case 3:    
+            }
+            var mainview = document.getElementById("mainview");
+            mainview.appendChild(div);
+        }
+    </script>
+
+                    
+                   
+    
   </head>
 
   <body>
-      <!-- Dialog box for connection -->
-    <div class="dialog_overlay"></div>  
-    <div class="dialog_connect">
-        <div>
-        <div class="dialog_header"></div>
-        <div class="dialog_content"></div>
-        <div class="dialog_footer"></div>
-        </div>
-    </div>   
     <!-- Fixed navbar -->
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
@@ -48,8 +60,7 @@
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li class="active"><a href="index.html">HOME</a></li>
-            <li><a href="services.html">CONNECT</a></li>
+            <li class="active"><a href="index.php">HOME</a></li>
             <li><a href="about.html">ABOUT</a></li>
             <li><a data-toggle="modal" data-target="#myModal" href="#myModal"><i class="fa fa-envelope-o"></i></a></li>
           </ul>
@@ -57,84 +68,35 @@
       </div>
     </div>
 
-	<div id="headerwrap">
+	<div id="headermembre">
 		<div class="container">
 			<div class="row centered">
 				<div class="col-lg-8 col-lg-offset-2">
 				<h1>Shavent</h1>
-				<h2>Event pictures sharing made simple</h2>
 				</div>
 			</div><!-- row -->
 		</div><!-- container -->
 	</div><!-- headerwrap -->
 
-
-	<div class="container w">
-		<div class="row centered">
-			<br><br>
-			<div class="col-lg-4">
-				<i class="fa fa-heart"></i>
-				<h4>Favorites</h4>
-				<p>Like and follow your favorite events.</p>
-			</div><!-- col-lg-4 -->
-
-			<div class="col-lg-4">
-				<i class="fa fa-laptop"></i>
-				<h4>Create</h4>
-				<p>Event sharing is made simple by creating QR codes on our website, and sharing them in your favorites events !</p>
-			</div><!-- col-lg-4 -->
-
-			<div class="col-lg-4">
-				<i class="fa fa-trophy"></i>
-				<h4>Awards</h4>
-				<p>Best contents awarded weekly, and provide good visibility of your events !</p>
-			</div><!-- col-lg-4 -->
-		</div><!-- row -->
-		<br>
-		<br>
+        <div id="container_member">
+            <div id="mainview" class="column">
+            </div>
+            <div id="eventlist" class="column">
+                <div id="listevent" class="column">
+                    <a id="add_event" onClick="generateMainView(1)"><img id="add_event_icon" src="assets/img/add.png" alt=""/> Ajouter un évènement</a>    
+                </div>
+            </div>
+            <div id="right" class="column"></div>
 	</div>
-	
+        
 	<!-- FOOTER -->
 	<div id="f">
 		<div class="container">
 			<div class="row centered">
 				<a href="#"><i class="fa fa-twitter"></i></a><a href="#"><i class="fa fa-facebook"></i></a><a href="#"><i class="fa fa-dribbble"></i></a>
-		
 			</div><!-- row -->
 		</div><!-- container -->
 	</div><!-- Footer -->
-
-
-	<!-- MODAL FOR CONTACT -->
-	<!-- Modal -->
-	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	  <div class="modal-dialog">
-	    <div class="modal-content">
-	      <div class="modal-header">
-	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-	        <h4 class="modal-title" id="myModalLabel">contact us</h4>
-	      </div>
-	      <div class="modal-body">
-		        <div class="row centered">
-		        	<p>We are available 24/7, so don't hesitate to contact us.</p>
-		        	<p>
-		        		Somestreet Ave, 987<br/>
-						London, UK.<br/>
-						+44 8948-4343<br/>
-						hi@blacktie.co
-		        	</p>
-		        	<div id="mapwrap">
-		<iframe height="300" width="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://www.google.es/maps?t=m&amp;ie=UTF8&amp;ll=52.752693,22.791016&amp;spn=67.34552,156.972656&amp;z=2&amp;output=embed"></iframe>
-					</div>	
-		        </div>
-	      </div>
-	      <div class="modal-footer">
-	        <button type="button" class="btn btn-danger" data-dismiss="modal">Save & Go</button>
-	      </div>
-	    </div><!-- /.modal-content -->
-	  </div><!-- /.modal-dialog -->
-	</div><!-- /.modal -->
-
 
     <!-- Bootstrap core JavaScript
     ================================================== -->

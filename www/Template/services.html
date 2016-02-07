@@ -8,7 +8,7 @@
     <meta name="author" content="">
     <link rel="shortcut icon" href="assets/ico/favicon.png">
 
-    <title>Shavent</title>
+    <title>SPOT - Free Bootstrap 3 Theme</title>
 
     <!-- Bootstrap core CSS -->
     <link href="assets/css/bootstrap.css" rel="stylesheet">
@@ -26,15 +26,7 @@
   </head>
 
   <body>
-      <!-- Dialog box for connection -->
-    <div class="dialog_overlay"></div>  
-    <div class="dialog_connect">
-        <div>
-        <div class="dialog_header"></div>
-        <div class="dialog_content"></div>
-        <div class="dialog_footer"></div>
-        </div>
-    </div>   
+
     <!-- Fixed navbar -->
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
@@ -48,52 +40,46 @@
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li class="active"><a href="index.html">HOME</a></li>
-            <li><a href="services.html">CONNECT</a></li>
+            <li><a href="index.html">HOME</a></li>
             <li><a href="about.html">ABOUT</a></li>
+            <li class="active"><a href="services.html">SERVICES</a></li>
+            <li><a href="works.html">WORKS</a></li>
             <li><a data-toggle="modal" data-target="#myModal" href="#myModal"><i class="fa fa-envelope-o"></i></a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
     </div>
 
-	<div id="headerwrap">
+	<div id="blue">
 		<div class="container">
 			<div class="row centered">
 				<div class="col-lg-8 col-lg-offset-2">
-				<h1>Shavent</h1>
-				<h2>Event pictures sharing made simple</h2>
+				<h4>Rejoignez la communauté Shavent !</b></h4>
+				<p>Merci de remplir les informations ci-dessous</p>
 				</div>
 			</div><!-- row -->
 		</div><!-- container -->
-	</div><!-- headerwrap -->
+	</div><!-- blue wrap -->
 
 
 	<div class="container w">
-		<div class="row centered">
-			<br><br>
-			<div class="col-lg-4">
-				<i class="fa fa-heart"></i>
-				<h4>Favorites</h4>
-				<p>Like and follow your favorite events.</p>
-			</div><!-- col-lg-4 -->
-
-			<div class="col-lg-4">
-				<i class="fa fa-laptop"></i>
-				<h4>Create</h4>
-				<p>Event sharing is made simple by creating QR codes on our website, and sharing them in your favorites events !</p>
-			</div><!-- col-lg-4 -->
-
-			<div class="col-lg-4">
-				<i class="fa fa-trophy"></i>
-				<h4>Awards</h4>
-				<p>Best contents awarded weekly, and provide good visibility of your events !</p>
-			</div><!-- col-lg-4 -->
-		</div><!-- row -->
-		<br>
-		<br>
-	</div>
-	
+            <form method="post" action="Scripts/add_new_user.php">
+                <div class="body_subscribe">
+                    <fieldset class='subscription_form' >
+                        <legend>Merci d'entrer vue informations</legend>
+                        <label for="nom_utilisateur" >Nom d'utilisateur</label>
+                        <input type="text" name='nom_utilisateur' id="nom_utilisateur" autofocus required/><br/>
+                        <label for="password">Mot de passe</label>
+                        <input type="text" name='password' id="password" required/><br/>
+                        <label for="mail">Adresse mail</label>
+                        <input type="text" name='mail' id="mail" required/><br/>
+                    </fieldset>
+                   <input type="submit" value="Envoyer"></code>
+                </div>
+            </form>
+		
+	</div><!-- container -->
+        
 	<!-- FOOTER -->
 	<div id="f">
 		<div class="container">
