@@ -24,6 +24,11 @@ body {
     
     margin-top: 70px;
 }
+ul
+{
+list-style-type: none;
+margin-top: 5px;
+}
 
 /* Titles */
 h1, h2, h3, h4, h5, h6 {
@@ -130,7 +135,7 @@ a:after {
 /*Member page*/
 
 #container_member {
-  padding-left: 230px;   /* LC width */
+  padding-left: 300px;   /* LC width */
   padding-right: 150px;  /* RC width */
 }
 
@@ -146,8 +151,8 @@ a:after {
 }
 
 #eventlist {
-  width: 230px;          /* LC width */
-  right: 230px;          /* LC width */
+  width: 300px;          /* LC width */
+  right: 300px;          /* LC width */
   margin-left: -100%;
   min-height: 500px;
   border-width: thin;

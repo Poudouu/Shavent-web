@@ -27,6 +27,7 @@
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
       <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
     <![endif]-->
+    
     <script>
         function generateMainView(param){
             var div = document.createElement("div");
@@ -40,6 +41,30 @@
             mainview.appendChild(div);
         }
     </script>
+    <?php
+    session_start();
+    function createTab(){
+       
+         // Connexion à la base de données
+        try {
+            $bdd = new PDO('mysql:host=localhost;dbname=users;charset=utf8', 'root', '');
+        } catch (Exception $e) {
+            die('Erreur : ' . $e->getMessage());
+        }
+
+            $req=$bdd->query("SELECT * FROM events");
+            $rows = $req->rowCount();
+            if($rows>=1){
+                
+            foreach ($req as $value){
+                
+                echo "<li class='event'> $value[1] ";
+            } 
+            }else{
+        
+            }
+    }
+     ?>
 
                     
                    
@@ -67,7 +92,7 @@
         </div><!--/.nav-collapse -->
       </div>
     </div>
-
+    
 	<div id="headermembre">
 		<div class="container">
 			<div class="row centered">
@@ -83,7 +108,10 @@
             </div>
             <div id="eventlist" class="column">
                 <div id="listevent" class="column">
-                    <a id="add_event" onClick="generateMainView(1)"><img id="add_event_icon" src="assets/img/add.png" alt=""/> Ajouter un évènement</a>    
+                    <ul class="eventlistbar">
+                        <?php createTab() ?>
+                        <li class="add_event"><a id="add_event" onClick="generateMainView(1)"><img id="add_event_icon" src="assets/img/add.png" alt=""/> Ajouter un évènement</a></li>
+                    </ul>
                 </div>
             </div>
             <div id="right" class="column"></div>
