@@ -27,19 +27,19 @@ if ($eventname && $date && $duration && $eventlocation) {
     
     $reqevent=$bdd->query("SELECT event FROM subscription WHERE login='$username'");
     $results=$reqevent->fetch(PDO::FETCH_ASSOC);
-    print_r($results['event']);
     
     if(!$results['event']==0){
     $array_string= unserialize($results['event']);
     print_r($array_string);
     $array=  array_push($array_string, $lastid);
     print_r ($array_string);
-    $array=  array_push($array_string, $lastid);
-    print_r ($array_string);
     //$rows = count($array_string);
     }else{$array_string=[$lastid]; print_r($array_string); }
-
-    // Redirection du visiteur vers la page index
+    $array_string=  serialize($array_string);
+    print_r($array_string);
+    print_r($username);
+    $reqevent2 = $bdd->query("UPDATE subscription SET event='$array_string' WHERE login='$username'");
+    header('Location:../membre.php');
 } else {
     echo 'Veuillez entrer tous les champs';}
 ?>

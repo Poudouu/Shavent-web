@@ -41,29 +41,43 @@
             mainview.appendChild(div);
         }
     </script>
+    
+    
     <?php
-    session_start();
+    
+    function create_gridview($id){
+        print_r($id);
+        $dirname = "/assets/img/";
+        $images = glob($dirname."*.png");
+        foreach($images as $image) {
+        echo '<img src="'.$image.'"/><br />';
+        }
+    }
+    
     function createTab(){
-       
+           session_start();
+           $username=htmlentities(trim($_SESSION['nom_utilisateur']));
+
          // Connexion à la base de données
         try {
             $bdd = new PDO('mysql:host=localhost;dbname=users;charset=utf8', 'root', '');
         } catch (Exception $e) {
             die('Erreur : ' . $e->getMessage());
         }
-
-            $req=$bdd->query("SELECT * FROM events");
-            $rows = $req->rowCount();
-            if($rows>=1){
-                
-            foreach ($req as $value){
-                
-                echo "<li class='event'> $value[1] ";
-            } 
-            }else{
-        
-            }
+            $reqpermissions=$bdd->query("SELECT event FROM subscription WHERE login='$username'");
+            $events=$reqpermissions->fetch(PDO::FETCH_ASSOC);
+            if(!$events['event']==0){
+                $array_events=  unserialize($events['event']);
+                foreach ($array_events as $createvent) {           
+                $req=$bdd->query("SELECT nom FROM events WHERE id='$createvent'");
+                $events_name=$req->fetch(PDO::FETCH_ASSOC);
+                $name=$events_name['nom'];
+                echo "<li class='event'> <a class='eventlist' onclick='create_gridview($createvent)'>$name</a>";
+            }         
+        }
     }
+    
+
      ?>
 
                     
@@ -110,7 +124,7 @@
                 <div id="listevent" class="column">
                     <ul class="eventlistbar">
                         <?php createTab() ?>
-                        <li class="add_event"><a id="add_event" onClick="generateMainView(1)"><img id="add_event_icon" src="assets/img/add.png" alt=""/> Ajouter un évènement</a></li>
+                        <li class="add_event" style="margin-top:10px;"><a id="add_event" onClick="generateMainView(1)"><img id="add_event_icon" src="assets/img/add.png" alt=""/> Ajouter un évènement</a></li>
                     </ul>
                 </div>
             </div>
