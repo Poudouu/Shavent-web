@@ -34,11 +34,15 @@ if ($eventname && $date && $duration && $eventlocation) {
     print_r($array_string);
     $array=  array_push($array_string, $lastid);
     print_r ($array_string);
-    $array=  array_push($array_string, $lastid);
-    print_r ($array_string);
-    //$rows = count($array_string);
-    }else{$array_string=[$lastid]; print_r($array_string); }
-
+    }else{
+        $array_string[0]=$lastid;
+        print_r($array_string);
+        
+    }
+    $array_ser=  serialize($array_string);
+    print_r($array_ser);
+    $writeevent=$bdd->query("UPDATE subscription SET event='$array_ser' WHERE login='$username'");
+    
     // Redirection du visiteur vers la page index
 } else {
     echo 'Veuillez entrer tous les champs';}

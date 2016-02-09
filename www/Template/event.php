@@ -40,7 +40,6 @@
     </script>
     <?php
     function createTab(){
-        session_start();
         $username=$_SESSION['nom_utilisateur'];
          // Connexion à la base de données
         try {
@@ -55,11 +54,61 @@
         foreach($eventnames as $event){
         $reqev=$bdd->query("SELECT nom FROM events WHERE id='$event'");
         $ev=$reqev->fetch(PDO::FETCH_ASSOC);
-        print_r($event);
         echo "<li class='event'> <a  href='event.php?id=$event'>$ev[nom]</a> ";
         }
     }
+    function checkEventPerm(){  
+        try {
+            $bdd = new PDO('mysql:host=localhost;dbname=users;charset=utf8', 'root', '');
+        } catch (Exception $e) {
+            die('Erreur : ' . $e->getMessage());
+        }
+    
+    $eventid=$_GET['id'];
+    $username=$_SESSION['nom_utilisateur'];
+    $reqevent=$bdd->query("SELECT event FROM subscription WHERE login='$username'");
+    $results=$reqevent->fetch(PDO::FETCH_ASSOC);   
+    if(!$results['event']==0){
+    $array_string= unserialize($results['event']);
+    }
+    $perm_granted=false;
+    foreach($array_string as $eventidperm)
+        if($eventidperm==$eventid){
+             $perm_granted=true;
+            }
+    return $perm_granted;
+    }
+    
+    function createMainView(){
+        session_start();
+        $permission=checkEventPerm();
+        if($permission){
+        $username=$_SESSION['nom_utilisateur'];
+        try {
+            $bdd = new PDO('mysql:host=localhost;dbname=users;charset=utf8', 'root', '');
+        } catch (Exception $e) {
+            die('Erreur : ' . $e->getMessage());
+        }
+            
+        /*$reqevent=$bdd->query("SELECT event FROM subscription WHERE login='$username'");
+        $results=$reqevent->fetch(PDO::FETCH_ASSOC);
+        $eventnames=  unserialize($results['event']);
+        foreach($eventnames as $event){
+        $reqev=$bdd->query("SELECT nom FROM events WHERE id='$event'");
+        $ev=$reqev->fetch(PDO::FETCH_ASSOC);
+        $eventname=$ev['nom'];
+        print_r($eventname);*/
+        //}
+        echo $permission;
+        
+        }else{
+            echo "vous n'avez pas la permission d'afficher ce contenus";
+            
+        }
+       
+    }
      ?>
+  
 
 
     
@@ -100,6 +149,7 @@
 
         <div id="container_member">
             <div id="mainview" class="column">
+                <?php createMainView()?>
             </div>
             <div id="eventlist" class="column">
                 <div id="listevent" class="column">
