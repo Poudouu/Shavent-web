@@ -12,6 +12,30 @@
 @import url(http://fonts.googleapis.com/css?family=Raleway:400,300,700,900);
 
 /* OVERALL ASPECT */
+
+.myButton {
+	background-color:#74ad5a;
+	border:1px solid #3b6e22;
+        margin-top: 150px;
+        display: flex;
+        justify-content: center; /* align horizontal */
+        align-items: center; /* align vertical */	
+        cursor:pointer;
+	color:#ffffff;
+	font-family:Trebuchet MS;
+	font-size:18px;
+	text-decoration:none;
+        margin-bottom: auto;
+}
+.myButton:hover {
+	background-color:#68a54b;
+}
+.myButton:active {
+	position:relative;
+	top:1px;
+}
+
+
 body {
   background-color: #f2f2f2;
     font-family: "Lato";
@@ -136,7 +160,8 @@ a:after {
 
 #container_member {
   padding-left: 300px;   /* LC width */
-  padding-right: 150px;  /* RC width */
+  padding-right: 220px;  /* RC width */
+  
 }
 
 #container_member .column {
@@ -147,26 +172,26 @@ a:after {
 #mainview {
   width: 100%;
   min-height: 500px;
-  background-color: #FFF;
+  background-color: #f2f2f2;
 }
 
 #eventlist {
   width: 300px;          /* LC width */
   right: 300px;          /* LC width */
   margin-left: -100%;
-  min-height: 500px;
+  margin-top: 5px;
   border-width: thin;
   border-style: solid;
-  border-color: #bdbdbd;
-  background-color: #FFF;
+  border-color: #AAAAAA;
+  background-color: #f2f2f2;
 
 }
 
 #right {
-  width: 150px;          /* RC width */
-  margin-right: -150px;  /* RC width */
+  width: 220px;          /* RC width */
+  margin-right: -220px;  /* RC width */
   min-height: 500px;
-  background-color: #FFF;
+  background-color: #f2f2f2;
 
 }
 
@@ -176,6 +201,24 @@ a:after {
     width: 30px;
 }
 
+#dialog_overlay{
+    display: none;
+    opacity: .8;
+    position: fixed;
+    top:0px;
+    left:0px;
+    background:#FFF;
+    width: 100%;
+    z-index: 10;
+}
+
+#dialogbox{
+    display: none;
+    position: fixed;
+    background: #000;
+    border-radius: 7px;
+    z-index:10;
+}
 
 /* ==========================================================================
    Dialog section
@@ -238,6 +281,11 @@ a:after {
     color: red;
     margin-left: 20px;
     height: 35px;
+}
+
+#mainview img{
+    height: 150px;
+    margin: 5px;
 }
 
 /* ==========================================================================

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-
+<?php         session_start();?>
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -37,8 +37,26 @@
             var mainview = document.getElementById("mainview");
             mainview.appendChild(div);
         }
+        
+        function displayImage(){
+            this.render=function(){
+                var winH=window.innerHeight;
+                var winW=window.innerWidth;
+                var dialogoverlay = document.getElementById('dialogoverlay');
+                var dialogbox = document.getElementById('dialogbox');
+                dialogoverlay.style.display="block";
+                dialogoverlay.style.height=winH
+                dialogbox.style.display="block";
+        }
+    
+        }
+        var Dialog = new displayImage();
+        
     </script>
     <?php
+    
+    $imagepath = null;
+    
     function createTab(){
         $username=$_SESSION['nom_utilisateur'];
          // Connexion à la base de données
@@ -77,45 +95,46 @@
              $perm_granted=true;
             }
     return $perm_granted;
-    }
+    } 
     
     function createMainView(){
-        session_start();
         $permission=checkEventPerm();
         if($permission){
-        $username=$_SESSION['nom_utilisateur'];
-        try {
-            $bdd = new PDO('mysql:host=localhost;dbname=users;charset=utf8', 'root', '');
-        } catch (Exception $e) {
-            die('Erreur : ' . $e->getMessage());
-        }
-            
-        /*$reqevent=$bdd->query("SELECT event FROM subscription WHERE login='$username'");
-        $results=$reqevent->fetch(PDO::FETCH_ASSOC);
-        $eventnames=  unserialize($results['event']);
-        foreach($eventnames as $event){
-        $reqev=$bdd->query("SELECT nom FROM events WHERE id='$event'");
-        $ev=$reqev->fetch(PDO::FETCH_ASSOC);
-        $eventname=$ev['nom'];
-        print_r($eventname);*/
-        //}
-        echo $permission;
-        
+            $eventid=$_GET['id'];
+            $username=$_SESSION['nom_utilisateur'];
+            try {
+                $bdd = new PDO('mysql:host=localhost;dbname=users;charset=utf8', 'root', '');
+             } catch (Exception $e) {
+               die('Erreur : ' . $e->getMessage());
+            }
+            $req=$bdd->query("SELECT * FROM events WHERE id='$eventid'");   
+            $event=$req->fetch(PDO::FETCH_ASSOC);
+            $eventname=$event['nom'];
+            $imagepath=$event['path'];
+            $dirname = "/$username/";
+            $images = glob($dirname."*.jpg");
+            if(!$images==0){
+            foreach($images as $image) {
+            echo '<img src="'.$image.'" onclick="Dialog.render()" />';
+            }}else{echo "<h3 style='margin:10px'>Pas d'images dans le dossier</h3>";}
         }else{
             echo "vous n'avez pas la permission d'afficher ce contenus";
-            
         }
-       
+    }   
+    function display_image(){
+        list($width, $height, $type, $attr)=getimagesize($imgpath);
+        echo '<img src="'.$imgpath.'" style="height:'.$height.';width:'.$width.'"/>';
     }
-     ?>
-  
-
-
-    
+    ?>
     
   </head>
 
   <body>
+      
+    <!-- Dialog box for connection -->
+    <div class="dialog_overlay"></div>  
+    <div class="dialogbox">
+    </div> 
     <!-- Fixed navbar -->
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
@@ -129,7 +148,7 @@
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li class="active"><a href="index.php">HOME</a></li>
+              <li class="active"><a href="index.php">HOME</a></li>
             <li><a href="about.html">ABOUT</a></li>
             <li><a data-toggle="modal" data-target="#myModal" href="#myModal"><i class="fa fa-envelope-o"></i></a></li>
           </ul>
@@ -159,7 +178,9 @@
                     </ul>
                 </div>
             </div>
-            <div id="right" class="column"></div>
+            <div id="right" class="column"> 
+                <a href="qrimage.php" class="myButton">Generate QR Code</a>
+            </div>
 	</div>
         
 	<!-- FOOTER -->
