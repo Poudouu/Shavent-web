@@ -38,8 +38,29 @@ if ($eventname && $date && $duration && $eventlocation) {
         $array_string[0]=$lastid;
         
     }
+    
     $array_ser=  serialize($array_string);
     $writeevent=$bdd->query("UPDATE subscription SET event='$array_ser' WHERE login='$username'");
+    
+        $eventid=$lastid;
+
+         // Connexion à la base de données
+        try {
+            $bdd = new PDO('mysql:host=localhost;dbname=users;charset=utf8', 'root', '');
+        } catch (Exception $e) {
+            die('Erreur : ' . $e->getMessage());
+        }
+        
+        $requser=$bdd->query("SELECT * FROM subscription WHERE login='$username' ");
+        $userInfo=$requser->fetch(PDO::FETCH_ASSOC);
+        $userPass=$userInfo['password'];
+        
+        include "phpqrcode/qrlib.php";
+        $fileName=$eventid.$eventname.'.png';
+        $tempDir= "/Temp";
+        $codeContents = 'SHAVENT'.$eventname.$duration.$username;
+        $pngAbsoluteFilePath = $tempDir.$fileName;
+        QRcode::png($codeContents,$pngAbsoluteFilePath);
     
     // Redirection du visiteur vers la page index
     header('Location: ../membre.php');

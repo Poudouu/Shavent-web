@@ -24,8 +24,9 @@
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
       <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
     <![endif]-->
-    
-    <script>
+    <script type="text/javascript" src="qrcode.min.js"></script>
+    <script type="text/javascript">
+        
         function generateMainView(param){
             var div = document.createElement("div");
             switch (param){
@@ -52,6 +53,16 @@
         }
         var Dialog = new displayImage();
         
+        function generateQR(){
+        var qrcode = new QRcode(document.getElementById('right'),{
+            text='Shavent',
+            width=256,
+            height=256,
+            colorDark="#000000",
+            colorLight="#FFFFFFF",
+        });
+        }
+                
     </script>
     <?php
     
@@ -75,6 +86,11 @@
         echo "<li class='event'> <a  href='event.php?id=$event'>$ev[nom]</a> ";
         }
     }
+    
+    function createQR(){
+
+    }
+    
     function checkEventPerm(){  
         try {
             $bdd = new PDO('mysql:host=localhost;dbname=users;charset=utf8', 'root', '');
@@ -169,6 +185,7 @@
         <div id="container_member">
             <div id="mainview" class="column">
                 <?php createMainView()?>
+                <?php createQR()?>
             </div>
             <div id="eventlist" class="column">
                 <div id="listevent" class="column">
@@ -179,7 +196,17 @@
                 </div>
             </div>
             <div id="right" class="column"> 
-                <a href="qrimage.php" class="myButton">Generate QR Code</a>
+                <img src="assets/img/generate.png" onclick="generateQR()">
+                <div id="qrcode"></div>
+                <script type="text/javascript">
+                    var qrcode = new QRcode(document.getElementById('qrcode'),{
+                    text='Shavent',
+                    width=256,
+                    height=256,
+                    colorDark="#000000",
+                    colorLight="#FFFFFFF",
+                    });
+                </script> 
             </div>
 	</div>
         

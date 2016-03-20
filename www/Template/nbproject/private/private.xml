@@ -4,7 +4,10 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/D:/Programmes/wamp/www/Template/event.php</file>
-            <file>file:/D:/Programmes/wamp/www/Template/qrimage.php</file>
+            <file>file:/D:/Programmes/wamp/www/Template/Scripts/addEvent.php</file>
+            <file>file:/D:/Programmes/wamp/www/Template/Scripts/qrcode.php</file>
+            <file>file:/D:/Programmes/wamp/www/Template/membre.php</file>
+            <file>file:/D:/Programmes/wamp/www/Template/index.html</file>
         </group>
     </open-files>
 </project-private>
