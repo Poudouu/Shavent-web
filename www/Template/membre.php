@@ -48,7 +48,6 @@
         } catch (Exception $e) {
             die('Erreur : ' . $e->getMessage());
         }
-            
         $reqevent=$bdd->query("SELECT event FROM subscription WHERE login='$username'");
         $results=$reqevent->fetch(PDO::FETCH_ASSOC);
         if(!$results['event']==0){
