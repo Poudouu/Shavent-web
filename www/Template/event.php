@@ -24,9 +24,7 @@
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
       <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
     <![endif]-->
-    <script type="text/javascript" src="qrcode.min.js"></script>
-    <script type="text/javascript">
-        
+    <script>
         function generateMainView(param){
             var div = document.createElement("div");
             switch (param){
@@ -38,31 +36,6 @@
             var mainview = document.getElementById("mainview");
             mainview.appendChild(div);
         }
-        
-        function displayImage(){
-            this.render=function(){
-                var winH=window.innerHeight;
-                var winW=window.innerWidth;
-                var dialogoverlay = document.getElementById('dialogoverlay');
-                var dialogbox = document.getElementById('dialogbox');
-                dialogoverlay.style.display="block";
-                dialogoverlay.style.height=winH
-                dialogbox.style.display="block";
-        }
-    
-        }
-        var Dialog = new displayImage();
-        
-        function generateQR(){
-        var qrcode = new QRcode(document.getElementById('right'),{
-            text='Shavent',
-            width=256,
-            height=256,
-            colorDark="#000000",
-            colorLight="#FFFFFFF",
-        });
-        }
-                
     </script>
     <?php
     
@@ -87,10 +60,6 @@
         }
     }
     
-    function createQR(){
-
-    }
-    
     function checkEventPerm(){  
         try {
             $bdd = new PDO('mysql:host=localhost;dbname=users;charset=utf8', 'root', '');
@@ -113,7 +82,27 @@
     return $perm_granted;
     } 
     
+    function make_thumb($src, $dest, $desired_width) {
+      /* read the source image */
+      $source_image = imagecreatefromjpeg($src);
+      $width = imagesx($source_image);
+      $height = imagesy($source_image);
+
+      /* find the “desired height” of this thumbnail, relative to the desired width  */
+      $desired_height = floor($height * ($desired_width / $width));
+
+      /* create a new, “virtual” image */
+      $virtual_image = imagecreatetruecolor($desired_width, $desired_height);
+
+      /* copy source image at a resized size */
+      imagecopyresampled($virtual_image, $source_image, 0, 0, 0, 0, $desired_width, $desired_height, $width, $height);
+
+      /* create the physical thumbnail image to its destination */
+      imagejpeg($virtual_image, $dest);
+    }
+    
     function createMainView(){
+        ini_set("gd.jpeg_ignore_warning", true);
         $permission=checkEventPerm();
         if($permission){
             $eventid=$_GET['id'];
@@ -126,12 +115,17 @@
             $req=$bdd->query("SELECT * FROM events WHERE id='$eventid'");   
             $event=$req->fetch(PDO::FETCH_ASSOC);
             $eventname=$event['nom'];
-            $imagepath=$event['path'];
-            $dirname = "/$username/";
-            $images = glob($dirname."*.jpg");
+            $dirNameThumb= "Events/".$eventid."_".$eventname."/Thumbnail/";
+            $dirNameFullScale = "Events/".$eventid."_".$eventname."/".$username."/";
+            $images = glob($dirNameFullScale."*.jpg");
             if(!$images==0){
             foreach($images as $image) {
-            echo '<img src="'.$image.'" onclick="Dialog.render()" />';
+            $imageName= pathinfo($image, PATHINFO_FILENAME);
+            $pathThumb=$dirNameThumb.$imageName.'.jpg';
+            if(!file_exists($pathThumb)) {   
+            make_thumb($image, $pathThumb, 250);
+            }
+            echo '<img src="'.$pathThumb.'" onclick="Dialog.render()" />';
             }}else{echo "<h3 style='margin:10px'>Pas d'images dans le dossier</h3>";}
         }else{
             echo "vous n'avez pas la permission d'afficher ce contenus";
@@ -141,6 +135,21 @@
         list($width, $height, $type, $attr)=getimagesize($imgpath);
         echo '<img src="'.$imgpath.'" style="height:'.$height.';width:'.$width.'"/>';
     }
+    function generateDownBut(){
+        try {
+            $bdd = new PDO('mysql:host=localhost;dbname=users;charset=utf8', 'root', '');
+        } catch (Exception $e) {
+            die('Erreur : ' . $e->getMessage());
+        }
+    $eventid=$_GET['id'];
+    $req=$bdd->query("SELECT nom FROM events WHERE id='$eventid'");   
+    $event=$req->fetch(PDO::FETCH_ASSOC);
+    $path='Events/'.$eventid.'_'.$event['nom'].'/QR'.$eventid.'/'.$eventid.'_'.$event['nom'].'.png';
+    /**/
+    echo "<a href='$path' download><button>Download!</button></a>";
+    
+    }
+    
     ?>
     
   </head>
@@ -185,7 +194,6 @@
         <div id="container_member">
             <div id="mainview" class="column">
                 <?php createMainView()?>
-                <?php createQR()?>
             </div>
             <div id="eventlist" class="column">
                 <div id="listevent" class="column">
@@ -195,22 +203,11 @@
                     </ul>
                 </div>
             </div>
-            <div id="right" class="column"> 
-                <img src="assets/img/generate.png" onclick="generateQR()">
-                <div id="qrcode"></div>
-                <script type="text/javascript">
-                    var qrcode = new QRcode(document.getElementById('qrcode'),{
-                    text='Shavent',
-                    width=256,
-                    height=256,
-                    colorDark="#000000",
-                    colorLight="#FFFFFFF",
-                    });
-                </script> 
+            <div id="right" class="column">
+                <?php generateDownBut()?>
             </div>
 	</div>
-        
-	<!-- FOOTER -->
+        <!-- FOOTER -->
 	<div id="f">
 		<div class="container">
 			<div class="row centered">

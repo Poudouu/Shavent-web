@@ -109,7 +109,9 @@
                     </ul>
                 </div>
             </div>
-            <div id="right" class="column"></div>
+            <div id="right" class="column">
+                        
+            </div>
 	</div>
         
 	<!-- FOOTER -->

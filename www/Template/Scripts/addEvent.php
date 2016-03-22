@@ -23,13 +23,13 @@ if ($eventname && $date && $duration && $eventlocation) {
         echo "error";
     }
     // Insertion du message à l'aide d'une requête préparée
-    $req = $bdd->prepare('INSERT INTO events (nom, date,temps,lieu) VALUES(?,?,?,?)');
-    $lastid=$bdd->lastInsertId();
-    echo $lastid;
-    mkdir("../Events/$lastid_$eventname",0777,true);
-    mkdir("../Events/$lastid_$eventname/$username",0777,true);
-    $imgpath="../Events/$eventname";
+    $req = $bdd->prepare('INSERT INTO events (nom, date,temps,lieu) VALUES(?,?,?,?)');    
     $req->execute(array($eventname, $date, $duration, $eventlocation));
+    $lastid=$bdd->lastInsertId();
+    mkdir("../Events/$lastid"."_"."$eventname/QR"."$lastid",0777,true);
+    mkdir("../Events/$lastid"."_"."$eventname/$username",0777,true);
+    mkdir("../Events/$lastid"."_"."$eventname/Thumbnail",0777,true);
+    $imgpath="../Events/$lastid"."_"."$eventname/QR"."$lastid";
     $reqevent=$bdd->query("SELECT event FROM subscription WHERE login='$username'");
     $results=$reqevent->fetch(PDO::FETCH_ASSOC);   
     if(!$results['event']==0){
@@ -44,14 +44,13 @@ if ($eventname && $date && $duration && $eventlocation) {
     $requser=$bdd->query("SELECT * FROM subscription WHERE login='$username' ");
     $userInfo=$requser->fetch(PDO::FETCH_ASSOC);
     $userPass=$userInfo['password'];
-        
     $fileName=$eventid."_".$eventname.'.png';
-    $codeContents = 'SHAVENT'.$eventname.$duration.$username;
-    $pngAbsoluteFilePath = $imgpath.$fileName;
-    echo $pngAbsoluteFilePath;
-    QRcode::png($codeContents,$pngAbsoluteFilePath);
+    $codeContents = 'SHAVENT'.'+'.$eventname.'+'.$date.'+'.$username.'+'.'mescouilles'.'+';
+    $pngAbsoluteFilePath = $imgpath."/".$fileName;
+    QRcode::png($codeContents,$pngAbsoluteFilePath, QR_ECLEVEL_L, 4);
     // Redirection du visiteur vers la page index
-    /*header('Location: ../membre.php');*/
+    header('Location: ../membre.php');
 } else {
-    echo 'Veuillez entrer tous les champs';}
+    echo 'Veuillez entrer tous les champs';
+}
 ?>
