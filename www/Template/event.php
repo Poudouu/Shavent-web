@@ -36,11 +36,24 @@
             var mainview = document.getElementById("mainview");
             mainview.appendChild(div);
         }
+        
+        function CustomAlert(){
+            this.render=function(){
+                var winH= window.innerHeight;
+                var winW= window.innerWidth;
+                var dialogoverlay = document.getElementById('dialog_overlay');
+                var dialog = document.getElementById('dialogbox');
+                dialogoverlay.style.display = "block";
+                dialogoverlay.style.height = winH + "px";
+                <?php echo $GLOBALS['g_imagepath'];?>
+            };
+            this.ok=function(){
+            };
+        };
+        var Alert = new CustomAlert();
     </script>
     <?php
-    
-    $imagepath = null;
-    
+    $g_imagepath = null;
     function createTab(){
         $username=$_SESSION['nom_utilisateur'];
          // Connexion à la base de données
@@ -59,7 +72,6 @@
         echo "<li class='event'> <a  href='event.php?id=$event'>$ev[nom]</a> ";
         }
     }
-    
     function checkEventPerm(){  
         try {
             $bdd = new PDO('mysql:host=localhost;dbname=users;charset=utf8', 'root', '');
@@ -81,7 +93,6 @@
             }
     return $perm_granted;
     } 
-    
     function make_thumb($src, $dest, $desired_width) {
       /* read the source image */
       $source_image = imagecreatefromjpeg($src);
@@ -99,8 +110,7 @@
 
       /* create the physical thumbnail image to its destination */
       imagejpeg($virtual_image, $dest);
-    }
-    
+    } 
     function createMainView(){
         ini_set("gd.jpeg_ignore_warning", true);
         $permission=checkEventPerm();
@@ -117,6 +127,7 @@
             $eventname=$event['nom'];
             $dirNameThumb= "Events/".$eventid."_".$eventname."/Thumbnail/";
             $dirNameFullScale = "Events/".$eventid."_".$eventname."/".$username."/";
+            $g_imagepath=$dirNameFullScale;
             $images = glob($dirNameFullScale."*.jpg");
             if(!$images==0){
             foreach($images as $image) {
@@ -125,7 +136,7 @@
             if(!file_exists($pathThumb)) {   
             make_thumb($image, $pathThumb, 250);
             }
-            echo '<img src="'.$pathThumb.'" onclick="Dialog.render()" />';
+            echo '<img src="'.$pathThumb.'" onclick="Alert.render()" />';
             }}else{echo "<h3 style='margin:10px'>Pas d'images dans le dossier</h3>";}
         }else{
             echo "vous n'avez pas la permission d'afficher ce contenus";
@@ -149,7 +160,6 @@
     echo "<a href='$path' download><button>Download!</button></a>";
     
     }
-    
     ?>
     
   </head>
@@ -157,8 +167,14 @@
   <body>
       
     <!-- Dialog box for connection -->
-    <div class="dialog_overlay"></div>  
-    <div class="dialogbox">
+    <div id="dialog_overlay"></div>  
+    <div id="dialogbox">
+        <div id="dialogboxhead"></div>
+        <div id="dialogboxbody">
+            
+        </div>
+        <div id="dialogboxfoot"></div>
+
     </div> 
     <!-- Fixed navbar -->
     <div class="navbar navbar-inverse navbar-fixed-top">
@@ -199,7 +215,7 @@
                 <div id="listevent" class="column">
                     <ul class="eventlistbar">
                         <?php createTab() ?>
-                        <li class="add_event"><a id="add_event" onClick="generateMainView(1)"><img id="add_event_icon" src="assets/img/add.png" alt=""/> Ajouter un évènement</a></li>
+                        <li class="add_event"><a id="add_event" onClick="Alert.render('')"><img id="add_event_icon" src="assets/img/add.png" alt=""/> Ajouter un évènement</a></li>
                     </ul>
                 </div>
             </div>

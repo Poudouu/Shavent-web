@@ -220,28 +220,6 @@ a:after {
     z-index:10;
 }
 
-/* ==========================================================================
-   Dialog section
-   ========================================================================== */
-#dialog_overlay{
-    display: none;
-    opacity: .3;
-    position: fixed;
-    top: 0px;
-    left: 0px;
-    background: #000;
-    width: 100%;
-    z-index: 10;
-}
-#dialog_connect{
-    display: none;
-    position: fixed;
-    background: #FFF;
-    border-radius: 7px;
-    width: 550px;
-    z-index: 10;
-}
-
 #dialog_connect div{
     background: #FFF
 }
