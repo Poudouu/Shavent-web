@@ -70,7 +70,7 @@
                         <label for="nom_utilisateur" >Nom d'utilisateur</label>
                         <input type="text" name='nom_utilisateur' id="nom_utilisateur" autofocus required/><br/>
                         <label for="password">Mot de passe</label>
-                        <input type="text" name='password' id="password" required/><br/>
+                        <input type="password" name='password' id="password" required/><br/>
                         <label for="mail">Adresse mail</label>
                         <input type="text" name='mail' id="mail" required/><br/>
                     </fieldset>

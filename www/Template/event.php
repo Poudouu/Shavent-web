@@ -33,6 +33,7 @@
                 case 2:
                 case 3:    
             }
+            document.getElementById("mainview").innerHTML="";
             var mainview = document.getElementById("mainview");
             mainview.appendChild(div);
         }
@@ -45,7 +46,7 @@
                 var dialog = document.getElementById('dialogbox');
                 dialogoverlay.style.display = "block";
                 dialogoverlay.style.height = winH + "px";
-                <?php echo $GLOBALS['g_imagepath'];?>
+                
             };
             this.ok=function(){
             };
@@ -129,14 +130,16 @@
             $dirNameFullScale = "Events/".$eventid."_".$eventname."/".$username."/";
             $g_imagepath=$dirNameFullScale;
             $images = glob($dirNameFullScale."*.jpg");
+			
             if(!$images==0){
             foreach($images as $image) {
             $imageName= pathinfo($image, PATHINFO_FILENAME);
             $pathThumb=$dirNameThumb.$imageName.'.jpg';
+			$path=$dirNameFullScale.$imageName.'.jpg';
             if(!file_exists($pathThumb)) {   
             make_thumb($image, $pathThumb, 250);
             }
-            echo '<img src="'.$pathThumb.'" onclick="Alert.render()" />';
+            echo '<a href="'.$path.'" download><img src="'.$pathThumb.'"/></a>';
             }}else{echo "<h3 style='margin:10px'>Pas d'images dans le dossier</h3>";}
         }else{
             echo "vous n'avez pas la permission d'afficher ce contenus";
@@ -215,7 +218,7 @@
                 <div id="listevent" class="column">
                     <ul class="eventlistbar">
                         <?php createTab() ?>
-                        <li class="add_event"><a id="add_event" onClick="Alert.render('')"><img id="add_event_icon" src="assets/img/add.png" alt=""/> Ajouter un évènement</a></li>
+                        <li class="add_event"><a id="add_event" onClick="generateMainView(1)"><img id="add_event_icon" src="assets/img/add.png" alt=""/> Ajouter un évènement</a></li>
                     </ul>
                 </div>
             </div>

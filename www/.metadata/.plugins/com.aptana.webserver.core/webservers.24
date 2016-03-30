@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<servers>
+<server type="com.aptana.webserver.simple">
+<name>Shavent</name>
+<baseURL>http://localhost/Shavent</baseURL>
+<documentRoot>file:/C:/wamp/www/Shavent</documentRoot>
+</server>
+<server type="com.aptana.webserver.simple">
+<name>Shavent</name>
+<baseURL>http://localhost/Template</baseURL>
+<documentRoot>file:/C:/wamp/www/Template</documentRoot>
+</server>
+</servers>

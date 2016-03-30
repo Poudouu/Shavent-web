@@ -49,7 +49,7 @@ if ($eventname && $date && $duration && $eventlocation) {
     $pngAbsoluteFilePath = $imgpath."/".$fileName;
     QRcode::png($codeContents,$pngAbsoluteFilePath, QR_ECLEVEL_L, 4);
     // Redirection du visiteur vers la page index
-    header('Location: ../membre.php');
+    header('Location: ../index.php');
 } else {
     echo 'Veuillez entrer tous les champs';
 }
