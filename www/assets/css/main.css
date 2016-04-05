@@ -201,16 +201,6 @@ a:after {
     width: 30px;
 }
 
-#dialog_overlay{
-    display: none;
-    opacity: .8;
-    position: fixed;
-    top:0px;
-    left:0px;
-    background:#FFF;
-    width: 100%;
-    z-index: 10;
-}
 
 #dialogbox{
     display: none;

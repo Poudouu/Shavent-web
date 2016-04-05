@@ -34,24 +34,26 @@
 		overflow:auto;
 	}
 	#prev{
-		background-image:url(assets/img/grey-nav-arrow-left.png);
+		background-image:url(assets/img/arrowLeft.png);
 		background-repeat:no-repeat;
 		background-position:center center;
 		display:block;
 		float:left;
-		height:125px;
-		width:80px;
+		height:128px;
+		width:128px;
 		position:relative;
 		z-index:10;
 	}
 	#next{
-		background-image:url(assets/img/grey-nav-arrow-right.png);
+		background-image:url(assets/img/arrowRight.png);
+		background-repeat:no-repeat;
+		background-position:center center;
 		background-repeat:no-repeat;
 		background-position:center center;
 		display:block;
 		float:right;
-		height:125px;
-		width:80px;
+		height:128px;
+		width:128px;
 		position:relative;
 		z-index:10;
 	}
@@ -59,18 +61,45 @@
 		display:block;
 		margin:auto;
 		float:left;
-		height:720px;
-		width:960px;
 		overflow:hidden;
 		position:absolute;
 	}
+        #dialog_overlay{
+            display: none;
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            top:0;
+            left: 0;
+            background: #FFF;
+            z-index: 10;
+            opacity: .8;
+        }
+        #container{
+            display: none;
+            position: fixed;
+            background: #000;
+            border-radius: 7px;
+            background: rgb(60, 60, 60);
+            background: rgba(60, 60, 60, 0.4);
+            z-index: 10;
+        }
+        
+        img{
+    max-width: 100%;
+    max-height: 100%;
+    opacity: 1;
+    }
+    
     </style>
     <script type="text/javascript">
-		$(document).ready(function() {
-			$('#slider').cycle({
+        function generateImagePreview(){
+            
+            
+		$('#slider').cycle({
 				fx: 'fade' // choose your transition type, ex: fade, scrollUp, shuffle, etc...
-			});
 		});
+        }
     </script>
 	<script>
         function generateMainView(param){
@@ -85,18 +114,34 @@
             var mainview = document.getElementById("mainview");
             mainview.appendChild(div);
         }
-        function generatePreviewImage(path){
-            this.render=function(){
+        
+        function generatePreviewImage(){
+            this.render=function(path){
                 var winH= window.innerHeight;
                 var winW= window.innerWidth;
                 var dialogoverlay = document.getElementById('dialog_overlay');
-                var dialog = document.getElementById('dialogbox');
+                var image = document.getElementById('imagePreview');
+                var dialog = document.getElementById('container');
                 dialogoverlay.style.display = "block";
                 dialogoverlay.style.height = winH + "px";
-            };
+                var dialogHeight=winH*.8;
+                var dialogWidth=winW*.8;
+                dialog.style.height = dialogWidth;
+                dialog.style.width = dialogHeight;
+                dialog.style.left = ((winW*0.1))+"px";
+                dialog.style.top = "100px";
+                dialog.style.display = "block";
+                var div = document.createElement("div");
+                div.style.height = winH*.8+"px";
+                div.style.width = winW*.8+"px";
+                div.style.opacity = 1;
+                div.innerHTML="<img src='"+path+"' />";
+                dialog.appendChild(div);
+            }
             this.ok=function(){
-            };
-        };
+            }
+        }
+        var preview = new generatePreviewImage();
     </script>
     <?php
     $g_imagepath = null;
@@ -175,7 +220,6 @@
             $dirNameFullScale = "Events/".$eventid."_".$eventname."/".$username."/";
             $g_imagepath=$dirNameFullScale;
             $images = glob($dirNameFullScale."*.jpg");
-			
             if(!$images==0){
             foreach($images as $image) {
             $imageName= pathinfo($image, PATHINFO_FILENAME);
@@ -184,7 +228,8 @@
             if(!file_exists($pathThumb)) {   
             make_thumb($image, $pathThumb, 250);
             }
-            echo '<img src="'.$pathThumb.'" onClick="generatePreviewImage('.$path.')"/>';
+            //'.$path.'
+            echo '<img src="'.$pathThumb.'" onClick="preview.render(\''.$path.'\')"/>';
             }}else{echo "<h3 style='margin:10px'>Pas d'images dans le dossier</h3>";}
         }else{
             echo "vous n'avez pas la permission d'afficher ce contenus";
@@ -212,15 +257,9 @@
   </head>
   <body>
     <div id="dialog_overlay"></div>  
-    <div id="wrapper">
         <div id="container">
-        	<div class="controller" id="prev" onClick="slideLeft()"></div>
-        	<div id="slider">
-            <img src="arnaud.jpg" width="960" height="720" alt="face1"/>
-            <img src="12711012_1704257689789948_673817037146060082_o.jpg" width="960" height="720" alt="face2"/> </div>
-       	  <div class="controller" id="next"></div>
-		</div>
-  </div> 
+            <div id="imagePreview"></div>
+        </div>
     <!-- Fixed navbar -->
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">

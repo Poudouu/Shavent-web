@@ -22,7 +22,6 @@ if($username&&$password&&$mail){
     }
     // Insertion du message à l'aide d'une requête préparée
     $password=  sha1($password);
-  
     $checkuser= $bdd->prepare("SELECT * FROM subscription WHERE login='$username'");
     $checkuser->execute();
     $rows = $checkuser->rowCount();

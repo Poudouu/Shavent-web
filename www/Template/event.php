@@ -34,24 +34,26 @@
 		overflow:auto;
 	}
 	#prev{
-		background-image:url(assets/img/grey-nav-arrow-left.png);
+		background-image:url(assets/img/arrowLeft.png);
 		background-repeat:no-repeat;
 		background-position:center center;
 		display:block;
 		float:left;
-		height:125px;
-		width:80px;
+		height:128px;
+		width:128px;
 		position:relative;
 		z-index:10;
 	}
 	#next{
-		background-image:url(assets/img/grey-nav-arrow-right.png);
+		background-image:url(assets/img/arrowRight.png);
+		background-repeat:no-repeat;
+		background-position:center center;
 		background-repeat:no-repeat;
 		background-position:center center;
 		display:block;
 		float:right;
-		height:125px;
-		width:80px;
+		height:128px;
+		width:128px;
 		position:relative;
 		z-index:10;
 	}
@@ -59,18 +61,39 @@
 		display:block;
 		margin:auto;
 		float:left;
-		height:720px;
-		width:960px;
 		overflow:hidden;
 		position:absolute;
 	}
+        #dialog_overlay{
+            display: none;
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            top:0;
+            left: 0;
+            background: #FFF;
+            z-index: 2000;
+            opacity: .8;
+        }
+        #container_image{
+            display: none;
+			z-index:2050;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			background-position: center center;
+			background-size: contain;
+			background-repeat:no-repeat;
+		}
     </style>
     <script type="text/javascript">
-		$(document).ready(function() {
-			$('#slider').cycle({
+        function generateImagePreview(){
+            
+            
+		$('#slider').cycle({
 				fx: 'fade' // choose your transition type, ex: fade, scrollUp, shuffle, etc...
-			});
 		});
+        }
     </script>
 	<script>
         function generateMainView(param){
@@ -85,18 +108,39 @@
             var mainview = document.getElementById("mainview");
             mainview.appendChild(div);
         }
-        function generatePreviewImage(path){
-            this.render=function(){
+        
+        function generatePreviewImage(){
+            this.render=function(path){
                 var winH= window.innerHeight;
                 var winW= window.innerWidth;
                 var dialogoverlay = document.getElementById('dialog_overlay');
-                var dialog = document.getElementById('dialogbox');
+				var dialog = document.getElementById('container_image');
                 dialogoverlay.style.display = "block";
                 dialogoverlay.style.height = winH + "px";
-            };
+				dialogoverlay.onclick = function(){closePreview();}
+                var dialogHeight=winH*.8;
+                var dialogWidth=winW*.8;
+                dialog.style.height = dialogHeight+"px";
+                dialog.style.width = dialogWidth+"px";
+				dialog.style.display = 'block';
+				dialog.style.marginLeft = -(dialogWidth/2)+"px";
+				dialog.style.marginTop = -(dialogHeight/2)+"px";
+				var urlString = 'url(' + path + ')';
+				dialog.style.backgroundImage = urlString;	
+					
+            }
             this.ok=function(){
-            };
-        };
+            }
+        }
+        var preview = new generatePreviewImage();
+		
+		function closePreview(){
+			    var dialogoverlay = document.getElementById('dialog_overlay');
+				var dialog = document.getElementById('container_image');
+				dialogoverlay.style.display= 'none';
+				dialog.style.display= 'none';
+		}
+		
     </script>
     <?php
     $g_imagepath = null;
@@ -175,7 +219,6 @@
             $dirNameFullScale = "Events/".$eventid."_".$eventname."/".$username."/";
             $g_imagepath=$dirNameFullScale;
             $images = glob($dirNameFullScale."*.jpg");
-			
             if(!$images==0){
             foreach($images as $image) {
             $imageName= pathinfo($image, PATHINFO_FILENAME);
@@ -184,7 +227,8 @@
             if(!file_exists($pathThumb)) {   
             make_thumb($image, $pathThumb, 250);
             }
-            echo '<img src="'.$pathThumb.'" onClick="generatePreviewImage('.$path.')"/>';
+            //'.$path.'
+            echo '<img src="'.$pathThumb.'" onClick="preview.render(\''.$path.'\')"/>';
             }}else{echo "<h3 style='margin:10px'>Pas d'images dans le dossier</h3>";}
         }else{
             echo "vous n'avez pas la permission d'afficher ce contenus";
@@ -206,21 +250,14 @@
     $path='Events/'.$eventid.'_'.$event['nom'].'/QR'.$eventid.'/'.$eventid.'_'.$event['nom'].'.png';
     /**/
     echo "<a href='$path' download><button>Download!</button></a>";
-    
     }
     ?>
   </head>
   <body>
+  
     <div id="dialog_overlay"></div>  
-    <div id="wrapper">
-        <div id="container">
-        	<div class="controller" id="prev" onClick="slideLeft()"></div>
-        	<div id="slider">
-            <img src="arnaud.jpg" width="960" height="720" alt="face1"/>
-            <img src="12711012_1704257689789948_673817037146060082_o.jpg" width="960" height="720" alt="face2"/> </div>
-       	  <div class="controller" id="next"></div>
-		</div>
-  </div> 
+    <div id="container_image">
+    <img id = "close_prev" style="position: absolute; top: 0; right: 0" src="assets/img/Cancel-50.png"  onClick="closePreview()" width="50" height="50" alt=""/> </div>
     <!-- Fixed navbar -->
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
@@ -280,5 +317,5 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    </body>
+</body>
 </html>
