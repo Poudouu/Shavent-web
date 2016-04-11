@@ -11,91 +11,23 @@
 
     <title>Shavent</title>
     
-	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
     <script src="assets/js/bootstrap.min.js"></script>
-	<script type="text/javascript" src="http://malsup.github.com/jquery.cycle.all.js"></script>
+    <script type="text/javascript" src="http://malsup.github.com/jquery.cycle.all.js"></script>
     <!-- Bootstrap core CSS--> 
     <link href="assets/css/bootstrap.css" rel="stylesheet">
     <link href="assets/css/font-awesome.min.css" rel="stylesheet">
+    <link rel='stylesheet' href="flexslider.css" type="text/css">
+    <script src="jquery.flexslider.js"></script>
 	<style type="text/css">
     .slideshow { height: 232px; width: 232px; margin: auto }
     .slideshow img { padding: 15px; border: 1px solid #ccc; background-color: #eee; }
     </style>
     <!-- Custom styles for this template -->
     <link href="assets/css/main.css" rel="stylesheet">
-    <style type="text/css">
-	#wrapper{
-		display:block;
-		margin:auto;
-		height:720px;
-		width:960px;
-	}
-	#container{
-		overflow:auto;
-	}
-	#prev{
-		background-image:url(assets/img/arrowLeft.png);
-		background-repeat:no-repeat;
-		background-position:center center;
-		display:block;
-		float:left;
-		height:128px;
-		width:128px;
-		position:relative;
-		z-index:10;
-	}
-	#next{
-		background-image:url(assets/img/arrowRight.png);
-		background-repeat:no-repeat;
-		background-position:center center;
-		background-repeat:no-repeat;
-		background-position:center center;
-		display:block;
-		float:right;
-		height:128px;
-		width:128px;
-		position:relative;
-		z-index:10;
-	}
-	#slider{
-		display:block;
-		margin:auto;
-		float:left;
-		overflow:hidden;
-		position:absolute;
-	}
-        #dialog_overlay{
-            display: none;
-            width: 100%;
-            height: 100%;
-            position: fixed;
-            top:0;
-            left: 0;
-            background: #FFF;
-            z-index: 2000;
-            opacity: .8;
-        }
-        #container_image{
-            display: none;
-			z-index:2050;
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			background-position: center center;
-			background-size: contain;
-			background-repeat:no-repeat;
-		}
-    </style>
-    <script type="text/javascript">
-        function generateImagePreview(){
-            
-            
-		$('#slider').cycle({
-				fx: 'fade' // choose your transition type, ex: fade, scrollUp, shuffle, etc...
-		});
-        }
-    </script>
-	<script>
+    <script>
+        var currentPictId=0;
+        var username;
         function generateMainView(param){
             var div = document.createElement("div");
             switch (param){
@@ -108,42 +40,109 @@
             var mainview = document.getElementById("mainview");
             mainview.appendChild(div);
         }
-        
+            </script>
+    <script type="text/javascript" charset="utf-8">
+        function resizeImage(maxW,maxH,id){
+                var imageW = image.width;
+                var imageH = image.height;
+                if (imageH>maxH || imageW> maxW){
+                var deltaH = imageH-maxH;
+                var deltaW = imageW-maxW;
+                    if (deltaW>deltaH){
+                        var ratio = imageW/maxW;
+                    }else{
+                        var ratio = imageH/maxH;
+                    }
+                    imageH = imageH/ratio;
+                    imageW = imageW/ratio;
+                }
+                image.height=imageH;
+                image.width=imageW;
+        } 
+		 
         function generatePreviewImage(){
-            this.render=function(path){
+            this.render=function(imageName){
                 var winH= window.innerHeight;
                 var winW= window.innerWidth;
+                var maxWinH = winH*.8;
+                var maxWinW = winW*.8;
+                var imgPath="<?php echo $_SESSION['imgpath'];?>";
+                var eventId="<?php echo $_GET['id'];?>"
                 var dialogoverlay = document.getElementById('dialog_overlay');
-				var dialog = document.getElementById('container_image');
                 dialogoverlay.style.display = "block";
                 dialogoverlay.style.height = winH + "px";
-				dialogoverlay.onclick = function(){closePreview();}
-                var dialogHeight=winH*.8;
-                var dialogWidth=winW*.8;
-                dialog.style.height = dialogHeight+"px";
-                dialog.style.width = dialogWidth+"px";
-				dialog.style.display = 'block';
-				dialog.style.marginLeft = -(dialogWidth/2)+"px";
-				dialog.style.marginTop = -(dialogHeight/2)+"px";
-				var urlString = 'url(' + path + ')';
-				dialog.style.backgroundImage = urlString;	
-					
-            }
-            this.ok=function(){
+				dialogoverlay.onclick="closePreview()";
+				var dialog = document.getElementById('container');
+                dialog.style.display = 'block';
+				var prevContainer = document.getElementById('previewContainer');
+                var img = document.createElement("img");
+                $.ajax({url:'getImagePath.php',
+                        type:'post',
+                        data:{name:imageName},
+                        success:function(data){
+                        img.innerHTML='<img id="imagePreview" src="'+data+'"/>';
+                        prevContainer.appendChild(img);
+						img.id="imagePreview";
+						img.src = data;
+						img.style.maxHeight=maxWinH+"px";
+						img.style.maxWidth=maxWinW+"px";
+                        img.style.display = "block";
+                    }
+                    }
+                )
             }
         }
-        var preview = new generatePreviewImage();
 		
-		function closePreview(){
-			    var dialogoverlay = document.getElementById('dialog_overlay');
-				var dialog = document.getElementById('container_image');
-				dialogoverlay.style.display= 'none';
-				dialog.style.display= 'none';
+		$(document).ready(function(e) {
+         		$("#container").click(function(event){
+				    if ( event.target.getAttribute("id")=='imagePreview') {
+						return false;
+					}else{closePreview(); }
+				});   
+        });
+
+	function closePreview(){
+	    var dialogoverlay = document.getElementById('dialog_overlay');
+            var previewContainer = document.getElementById('previewContainer');
+			var dialog=document.getElementById('container');
+            dialogoverlay.style.display= 'none';
+            dialog.style.display= 'none';
+			previewContainer.innerHTML="";
+	}
+        var preview = new generatePreviewImage();
+
+    </script>
+    <style type="text/css">
+	
+        #dialog_overlay{
+            display: none;
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            top:0;
+            left: 0;
+            background: #000;
+            z-index: 800;
+            opacity: .8;
+        }
+        
+        #container{
+            display: none;
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            top:0;
+            left: 0;
+            z-index: 900;
+        }
+		#container #previewContainer{
+			margin: 0 auto;
 		}
 		
-    </script>
+	
+		
+    </style>
     <?php
-    $g_imagepath = null;
     function createTab(){
         $username=$_SESSION['nom_utilisateur'];
          // Connexion à la base de données
@@ -217,23 +216,27 @@
             $eventname=$event['nom'];
             $dirNameThumb= "Events/".$eventid."_".$eventname."/Thumbnail/";
             $dirNameFullScale = "Events/".$eventid."_".$eventname."/".$username."/";
-            $g_imagepath=$dirNameFullScale;
+            $_SESSION['imgpath']=$dirNameFullScale;
             $images = glob($dirNameFullScale."*.jpg");
+            $counter=0;
             if(!$images==0){
             foreach($images as $image) {
             $imageName= pathinfo($image, PATHINFO_FILENAME);
             $pathThumb=$dirNameThumb.$imageName.'.jpg';
-			$path=$dirNameFullScale.$imageName.'.jpg';
+            $path=$dirNameFullScale.$imageName.'.jpg';
             if(!file_exists($pathThumb)) {   
             make_thumb($image, $pathThumb, 250);
+            $req = $bdd->prepare('INSERT INTO image (path, user,event,name) VALUES(?,?,?,?)');
+            echo ($path.$username.$eventid.$imageName);
+            $req->execute(array($path, $username,$eventid,$imageName));
             }
-            //'.$path.'
-            echo '<img src="'.$pathThumb.'" onClick="preview.render(\''.$path.'\')"/>';
+            echo '<img id="thumb__'.$counter.'" src="'.$pathThumb.'" onClick="preview.render(\''.$imageName.'\')"/>';
+            $counter=$counter+1;
             }}else{echo "<h3 style='margin:10px'>Pas d'images dans le dossier</h3>";}
         }else{
             echo "vous n'avez pas la permission d'afficher ce contenus";
         }
-    }   
+    }
     function display_image(){
         list($width, $height, $type, $attr)=getimagesize($imgpath);
         echo '<img src="'.$imgpath.'" style="height:'.$height.';width:'.$width.'"/>';
@@ -254,11 +257,12 @@
     ?>
   </head>
   <body>
-  
-    <div id="dialog_overlay"></div>  
-    <div id="container_image">
-    <img id = "close_prev" style="position: absolute; top: 0; right: 0" src="assets/img/Cancel-50.png"  onClick="closePreview()" width="50" height="50" alt=""/> </div>
-    <!-- Fixed navbar -->
+      <div id='dialog_overlay'></div>
+      <div id='container' class="container">
+          <div id='previewContainer' class="previewContainer">
+          </div>
+      </div>
+      
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
@@ -278,7 +282,6 @@
         </div><!--/.nav-collapse -->
       </div>
     </div>
-    
 	<div id="headermembre">
 		<div class="container">
 			<div class="row centered">
@@ -313,7 +316,6 @@
 			</div><!-- row -->
 		</div><!-- container -->
 	</div><!-- Footer -->
-
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
