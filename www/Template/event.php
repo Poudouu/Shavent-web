@@ -10,21 +10,24 @@
     <link rel="shortcut icon" href="assets/ico/favicon.png">
 
     <title>Shavent</title>
-
-    <!-- Bootstrap core CSS -->
+    
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="http://malsup.github.com/jquery.cycle.all.js"></script>
+    <!-- Bootstrap core CSS--> 
     <link href="assets/css/bootstrap.css" rel="stylesheet">
     <link href="assets/css/font-awesome.min.css" rel="stylesheet">
-
+    <link rel='stylesheet' href="flexslider.css" type="text/css">
+    <script src="jquery.flexslider.js"></script>
+	<style type="text/css">
+    .slideshow { height: 232px; width: 232px; margin: auto }
+    .slideshow img { padding: 15px; border: 1px solid #ccc; background-color: #eee; }
+    </style>
     <!-- Custom styles for this template -->
     <link href="assets/css/main.css" rel="stylesheet">
-
-
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
-    <![endif]-->
     <script>
+        var currentPictId=0;
+        var username;
         function generateMainView(param){
             var div = document.createElement("div");
             switch (param){
@@ -37,24 +40,200 @@
             var mainview = document.getElementById("mainview");
             mainview.appendChild(div);
         }
-        
-        function CustomAlert(){
-            this.render=function(){
+            </script>
+    <script type="text/javascript" charset="utf-8">
+        function resizeImage(maxW,maxH,id){
+                var imageW = image.width;
+                var imageH = image.height;
+                if (imageH>maxH || imageW> maxW){
+                var deltaH = imageH-maxH;
+                var deltaW = imageW-maxW;
+                    if (deltaW>deltaH){
+                        var ratio = imageW/maxW;
+                    }else{
+                        var ratio = imageH/maxH;
+                    }
+                    imageH = imageH/ratio;
+                    imageW = imageW/ratio;
+                }
+                image.height=imageH;
+                image.width=imageW;
+        } 
+        function generatePreviewImage(){
+            this.render=function(imageName){
                 var winH= window.innerHeight;
                 var winW= window.innerWidth;
+                var maxWinH = winH*.8;
+                var maxWinW = winW*.8;
+                var imgPath="<?php echo $_SESSION['imgpath'];?>";
+                var eventId="<?php echo $_GET['id'];?>"
                 var dialogoverlay = document.getElementById('dialog_overlay');
-                var dialog = document.getElementById('dialogbox');
                 dialogoverlay.style.display = "block";
                 dialogoverlay.style.height = winH + "px";
-                
-            };
-            this.ok=function(){
-            };
-        };
-        var Alert = new CustomAlert();
+                dialogoverlay.onclick="closePreview()";
+            var dialog = document.getElementById('container');
+                dialog.style.display = 'table';
+		var prevContainer = document.getElementById('previewContainer');
+                var img = document.createElement("img");
+                var arrowLeft = document.getElementById('arrowLeft');
+                var arrowRight = document.getElementById('arrowRight');
+                $.ajax({url:'getImagePath.php',
+                        type:'post',
+                        data:{name:imageName,id:eventId},
+                        success:function(data){
+                        img.innerHTML='<img id="imagePreview" src="'+data+'"/>';
+                        prevContainer.appendChild(img);
+						img.id="imagePreview";
+						img.src = data;
+						img.style.maxHeight=maxWinH+"px";
+						img.style.maxWidth=maxWinW+"px";
+                        img.style.display = "block";
+                    }
+                    }
+                )
+            }
+        }
+        function slideRight(){
+        var eventId="<?php echo $_GET['id'];?>"
+        var imagePath=document.getElementById('imagePreview').src;
+        var fileNameIndex = imagePath.lastIndexOf("/") + 1;
+        var imageName = imagePath.substr(fileNameIndex);
+        imageName=imageName.slice(0, -4);
+        var prevContainer = document.getElementById('previewContainer');
+        previewContainer.removeChild(document.getElementById('imagePreview'));
+        var img = document.createElement("img");
+        var winH= window.innerHeight;
+        var winW= window.innerWidth;
+        var maxWinH = winH*.8;
+        var maxWinW = winW*.8;
+        $.ajax({url:'getNextImPath.php',
+                        type:'post',
+                        data:{name:imageName,id:eventId},
+                        success:function(data){
+                            img.innerHTML='<img id="imagePreview" src="'+data+'"/>';
+                            prevContainer.appendChild(img);
+                            img.id="imagePreview";
+                            img.src = data;
+                            img.style.maxHeight=maxWinH+"px";
+                            img.style.maxWidth=maxWinW+"px";
+                            img.style.display = "block";
+                        }
+                    }
+                )
+        }
+        function slideLeft(){
+        var eventId="<?php echo $_GET['id'];?>"
+        var imagePath=document.getElementById('imagePreview').src;
+        var fileNameIndex = imagePath.lastIndexOf("/") + 1;
+        var imageName = imagePath.substr(fileNameIndex);
+        imageName=imageName.slice(0, -4);
+        var prevContainer = document.getElementById('previewContainer');
+        previewContainer.removeChild(document.getElementById('imagePreview'));
+        var img = document.createElement("img");
+        var winH= window.innerHeight;
+        var winW= window.innerWidth;
+        var maxWinH = winH*.8;
+        var maxWinW = winW*.8;
+        $.ajax({url:'getPrevImPath.php',
+                        type:'post',
+                        data:{name:imageName,id:eventId},
+                        success:function(data){
+                            img.innerHTML='<img id="imagePreview" src="'+data+'"/>';
+                            prevContainer.appendChild(img);
+                            img.id="imagePreview";
+                            img.src = data;
+                            img.style.maxHeight=maxWinH+"px";
+                            img.style.maxWidth=maxWinW+"px";
+                            img.style.display = "block";
+                        }
+                    }
+                )
+        }
+        $(document).ready(function(e) {
+            $("#container").click(function(event){
+                switch (event.target.getAttribute("id")){
+                    case 'imagePreview':
+                        return false;
+                        break;
+                    case 'arrowLeft':
+                        slideLeft();
+                        break;
+                    case 'arrowRight':
+                        slideRight();
+                        break;
+                    default:
+                closePreview();
+                }
+            });
+        });   
+		function closePreview(){
+	    var dialogoverlay = document.getElementById('dialog_overlay');
+            var previewContainer = document.getElementById('previewContainer');
+            var dialog=document.getElementById('container');
+            dialogoverlay.style.display= 'none';
+            dialog.style.display= 'none';
+            previewContainer.removeChild(document.getElementById('imagePreview'));
+	}
+        var preview = new generatePreviewImage();
+
     </script>
+    <style type="text/css">
+	
+        #dialog_overlay{
+            display: none;
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            top:0;
+            left: 0;
+            background: #000;
+            z-index: 800;
+            opacity: .8;
+        }
+        
+        #container{
+            display: none;
+            height: 100%;
+            width: 100%;
+            position: fixed;
+            table-layout: fixed;
+            top:0;
+            left: 0;
+            z-index: 900;
+        }
+	#container #previewContainer{
+               display: inline-block;
+               max-height: 100%;
+               max-width: 100%;
+               vertical-align: middle;
+	}
+        
+        #container #previewContainer #arrowLeft{
+               height:100px;
+               left:20px;
+               top:47%;
+               position: absolute;   
+        }
+        
+        #container #previewContainer #arrowRight{
+               height:100px;
+               right:20px;
+               top:47%;
+               position: absolute;
+        }
+        
+        #middleContainer {
+            display:table-cell;
+                    text-align: center;
+                    vertical-align: middle;
+                    width: 100%;
+        }
+		
+	
+		
+    </style>
     <?php
-    $g_imagepath = null;
+    
     function createTab(){
         $username=$_SESSION['nom_utilisateur'];
          // Connexion à la base de données
@@ -128,23 +307,27 @@
             $eventname=$event['nom'];
             $dirNameThumb= "Events/".$eventid."_".$eventname."/Thumbnail/";
             $dirNameFullScale = "Events/".$eventid."_".$eventname."/".$username."/";
-            $g_imagepath=$dirNameFullScale;
-            $images = glob($dirNameFullScale."*.jpg");
-			
+            $_SESSION['imgpath']=$dirNameFullScale;
+            $images = glob($dirNameFullScale."*.{jpg,JPG}", GLOB_BRACE);
+            $counter=0;
             if(!$images==0){
             foreach($images as $image) {
             $imageName= pathinfo($image, PATHINFO_FILENAME);
             $pathThumb=$dirNameThumb.$imageName.'.jpg';
-			$path=$dirNameFullScale.$imageName.'.jpg';
+            $path=$dirNameFullScale.$imageName.'.jpg';
             if(!file_exists($pathThumb)) {   
             make_thumb($image, $pathThumb, 250);
+            $req = $bdd->prepare('INSERT INTO image (path, user,event,name) VALUES(?,?,?,?)');
+            echo ($path.$username.$eventid.$imageName);
+            $req->execute(array($path, $username,$eventid,$imageName));
             }
-            echo '<a href="'.$path.'" download><img src="'.$pathThumb.'"/></a>';
+            echo '<img id="thumb__'.$counter.'" src="'.$pathThumb.'" onClick="preview.render(\''.$imageName.'\')"/>';
+            $counter=$counter+1;
             }}else{echo "<h3 style='margin:10px'>Pas d'images dans le dossier</h3>";}
         }else{
             echo "vous n'avez pas la permission d'afficher ce contenus";
         }
-    }   
+    }
     function display_image(){
         list($width, $height, $type, $attr)=getimagesize($imgpath);
         echo '<img src="'.$imgpath.'" style="height:'.$height.';width:'.$width.'"/>';
@@ -161,25 +344,20 @@
     $path='Events/'.$eventid.'_'.$event['nom'].'/QR'.$eventid.'/'.$eventid.'_'.$event['nom'].'.png';
     /**/
     echo "<a href='$path' download><button>Download!</button></a>";
-    
     }
     ?>
-    
   </head>
-
   <body>
+      <div id='dialog_overlay'></div>
+      <div id='container' class="container">
+          <div id='middleContainer' class='middleContainer'>
+            <div id='previewContainer' class="previewContainer">
+                <img id='arrowLeft' src='assets/img/arrowLeft.png'>
+                <img id='arrowRight' src='assets/img/arrowRight.png'>
+            </div>
+          </div>
+      </div>
       
-    <!-- Dialog box for connection -->
-    <div id="dialog_overlay"></div>  
-    <div id="dialogbox">
-        <div id="dialogboxhead"></div>
-        <div id="dialogboxbody">
-            
-        </div>
-        <div id="dialogboxfoot"></div>
-
-    </div> 
-    <!-- Fixed navbar -->
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
@@ -199,7 +377,6 @@
         </div><!--/.nav-collapse -->
       </div>
     </div>
-    
 	<div id="headermembre">
 		<div class="container">
 			<div class="row centered">
@@ -234,11 +411,8 @@
 			</div><!-- row -->
 		</div><!-- container -->
 	</div><!-- Footer -->
-
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-    <script src="assets/js/bootstrap.min.js"></script>
-  </body>
+</body>
 </html>

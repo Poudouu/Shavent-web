@@ -30,37 +30,51 @@
             var div = document.createElement("div");
             switch (param){
                 case 1:
-                div.innerHTML= "<form method='post' action='Scripts/addEvent.php'>"+"<fieldset class='subscription_form' >"+ "<legend>Veuillez rentrer les informations de l'évènement</legend>"+"<label for='event_name' style='margin:10px'>Nom de l'évènement</label>"+"<input type='text' name='event_name' id='event_name' autofocus required/><br/>"+"<label for='date' style='margin:10px'>Mot de passe</label>"+"<input type='date' name='date' id='date' required/><br/>"+"<label for='duration' style='margin:10px'>Durée de l'évènement (min)</label>"+"<input type='text' name='duration' id='duration' required/><br/>"+"<label for='event_location' style='margin:10px'>Lieu de l'évènement</label>"+"<input type='text' name='event_location' id='event_location' required/><br/>"+"</fieldset>"+"<input type='submit' value='Envoyer' style='margin:10px'></code>"+"</form>";
+                div.innerHTML= "<form method='post' action='Scripts/addEvent.php'>"+
+                                "<fieldset class='subscription_form' >"+ 
+                                    "<legend>Veuillez rentrer les informations de l'évènement</legend>"+
+                                    "<label for='event_name' style='margin:10px'>Nom de l'évènement</label>"+
+                                    "<input type='text' name='event_name' id='event_name' autofocus required/><br/>"+
+                                    "<label for='date' style='margin:10px'>Date de début</label>"+
+                                    "<input type='date' name='date' id='date' required/><br/>"+
+                                    "<label for='duree' style='margin:10px'>Durée de l'évènement</label>"+
+                                    "<input type='text' name='duree' id='duree' required/><br/>"+                
+                                    "<label for='event_location' style='margin:10px'>Lieu de l'évènement</label>"+
+                                    "<input type='text' name='event_location' id='event_location' required/><br/>"+
+                                "</fieldset>"+
+                                "<input type='submit' value='Envoyer' style='margin:10px'></code>"+
+                               "</form>";    
                 case 2:
                 case 3:    
             }
             var mainview = document.getElementById("mainview");
+            document.getElementById("mainview").innerHTML="";
             mainview.appendChild(div);
         }
+		
+		function generatePImagePreview(path){
+		
+			
+		}
+		
     </script>
-    
-    
     <?php
+    session_start();
     function createTab(){
-        session_start();
         $username=$_SESSION['nom_utilisateur'];
          // Connexion à la base de données
         try {
-            $bdd = new PDO('mysql:host=localhost;dbname=users;charset=utf8', 'root', '');
+            $bdd = new PDO('mysql:host=localhost;dbname=dbusers;charset=utf8', 'root', '');
         } catch (Exception $e) {
             die('Erreur : ' . $e->getMessage());
         }
-            
-        $reqevent=$bdd->query("SELECT event FROM subscription WHERE login='$username'");
-        $results=$reqevent->fetch(PDO::FETCH_ASSOC);
-        if(!$results['event']==0){
-            $eventnames=  unserialize($results['event']);
-            foreach($eventnames as $event){
-                $reqev=$bdd->query("SELECT nom FROM events WHERE id='$event'");
-                $ev=$reqev->fetch(PDO::FETCH_ASSOC);
-                echo "<li class='event'> <a  href='event.php?id=$event'>$ev[nom]</a> ";
-            }
-        }else{}
+        
+        $reqevent=$bdd->query("SELECT * FROM ".$username."");
+        while($event=$reqevent->fetch(PDO::FETCH_ASSOC)){
+        $evName=$bdd->query("SELECT Event_ID FROM ".$username."");
+            echo "<li class='event'>".
+                 "<a href='event.php?id=".$event['Event_ID']."'>".$event['Name']."</a>";
+        }
     }
      ?>
 
@@ -113,14 +127,7 @@
                 </div>
             </div>
             <div id="right" class="column">
-            	<div id="qrcode">
-            		<?php
-            		include('/Qrcode/qrlib.php');
-					QRcode::png('PHP QR Code :)');
-            		?>
-            		
-            	</div>
-            	
+                        
             </div>
 	</div>
         

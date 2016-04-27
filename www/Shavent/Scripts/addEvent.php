@@ -9,40 +9,52 @@ define('DB_SCHEMA', 'users');
 //Variables passées depuis subscribe
 $username=htmlentities(trim($_SESSION['nom_utilisateur']));
 $eventname=  htmlentities(trim($_POST['event_name']));
-$date = htmlentities(trim($_POST['date']));
-$duration = htmlentities(trim($_POST['duration']));
+$dateStart = htmlentities(trim($_POST['date']));
+$duration = htmlentities(trim($_POST['duree']));
 $eventlocation = htmlentities(trim($_POST['event_location']));
+include "../phpqrcode/qrlib.php";
 
+echo $username."_".$eventname."_".$dateStart."_".$duration."_".$eventlocation."</br>";
 
-if ($eventname && $date && $duration && $eventlocation) {
+if ($eventname && $dateStart && $duration && $eventlocation) {
     // Connexion à la base de données
-    mkdir("../Events/$eventname",0777,true);
-    mkdir("../Events/$eventname/$username",0777,true);
-    $imgpath="/Events/$eventname";
     try {
-        $bdd = new PDO('mysql:host=localhost;dbname=users;charset=utf8', 'root', '');
+        $bdd = new PDO('mysql:host=localhost;dbname=dbevent;charset=utf8', 'root', '');
     } catch (Exception $e) {
         die('Erreur : ' . $e->getMessage());
+        echo "error";
     }
+    
+    $eventid=  uniqid();
     // Insertion du message à l'aide d'une requête préparée
-    $req = $bdd->prepare('INSERT INTO events (nom, date,temps,lieu,path) VALUES(?,?,?,?,?)');
-    $req->execute(array($eventname, $date, $duration, $eventlocation,$imgpath));
-    $lastid=$bdd->lastInsertId();
+    $req = $bdd->prepare('INSERT INTO tb_event (event_ID,Name) VALUES(?,?)');
+    $req->execute(array($eventid, $eventname)); 
     
-    $reqevent=$bdd->query("SELECT event FROM subscription WHERE login='$username'");
-    $results=$reqevent->fetch(PDO::FETCH_ASSOC);   
-    if(!$results['event']==0){
-    $array_string= unserialize($results['event']);
-    $array=  array_push($array_string, $lastid);
-    }else{
-        $array_string[0]=$lastid;
+    $req = $bdd->prepare('INSERT INTO tb_event_time (event_ID,start_date, duration) VALUES(?,?,?)');  
+    $req->execute(array($eventid,$dateStart, $duration));
         
-    }
-    $array_ser=  serialize($array_string);
-    $writeevent=$bdd->query("UPDATE subscription SET event='$array_ser' WHERE login='$username'");
+    $req = $bdd->exec("CREATE TABLE `".$eventid."` (
+    `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+    `Path` VARCHAR(200) NOT NULL,
+    `PathThumb` VARCHAR(200) NOT NULL)");
     
-    // Redirection du visiteur vers la page index
-    header('Location: ../membre.php');
+    try {
+        $bdd = new PDO('mysql:host=localhost;dbname=dbusers;charset=utf8', 'root', '');
+    } catch (Exception $e) {
+        die('Erreur : ' . $e->getMessage());
+        echo "error";
+    }
+    echo $username;
+    $req = $bdd->prepare('INSERT INTO '.$username.' (Event_ID,Name) VALUES(?,?)');  
+    $req->execute(array($eventid,$eventname));    
+    
+    $imgpath="../Events/QR";
+    $fileName=$eventid.'.png';
+    $codeContents = 'SHAVENT'.'+'.$eventname.'+'."".'+'.$username.'+'.'mescouilles'.'+';
+    $pngAbsoluteFilePath = $imgpath."/".$fileName;
+    QRcode::png($codeContents,$pngAbsoluteFilePath, QR_ECLEVEL_L, 4);
+    //header('Location: ../index.php');
 } else {
-    echo 'Veuillez entrer tous les champs';}
+    echo 'Veuillez entrer tous les champs';
+}
 ?>
