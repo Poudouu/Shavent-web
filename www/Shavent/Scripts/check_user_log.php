@@ -7,7 +7,7 @@ $password = htmlentities(trim($_POST['password']));
 if($username&&$password){
         try
     {
-        $bdd = new PDO('mysql:host=localhost;dbname=users;charset=utf8', 'root', '');
+        $bdd = new PDO('mysql:host=localhost;dbname=dbusers;charset=utf8', 'root', '');
     }
     catch(Exception $e)
     {
@@ -15,7 +15,7 @@ if($username&&$password){
     }
     // Insertion du message à l'aide d'une requête préparée
     $password=  sha1($password);
-    $req=$bdd->query("SELECT * FROM subscription WHERE login='$username' && password='$password'");
+    $req=$bdd->query("SELECT * FROM tb_users WHERE username='$username' && password='$password'");
     $rows = $req->rowCount();
     
     if($rows==1){
