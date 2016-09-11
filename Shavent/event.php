@@ -309,7 +309,7 @@
     echo "<a href='$path' download><button>Download!</button></a>";
     }
     ?>
-    <script src="https://npmcdn.com/imagesloaded@4.1/imagesloaded.pkgd.min.js"></script>
+    <script src="https://unpkg.com/imagesloaded@4.1/imagesloaded.pkgd.min.js"></script>
     <script>
 		$(function(){
 			
